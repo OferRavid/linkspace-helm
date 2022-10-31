@@ -1,16 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "applink.fullname" . }}
+  name: {{ include "links-app.fullname" . }}
   labels:
-    {{- include "applink.labels" . | nindent 4 }}
+    {{- include "links-app.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: 
+    - port: {{ .Values.service.port }}
       targetPort: 5000
       protocol: TCP
-      port: {{ .Values.service.port }}
 
   selector:
-    {{- include "applink.selectorLabels" . | nindent 4 }}
+    {{- include "links-app.selectorLabels" . | nindent 4 }}
