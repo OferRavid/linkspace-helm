@@ -1,0 +1,30 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "applink.fullname" . }}
+  labels: 
+    {{- include "applink.labels" . | nindent 6   }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "applink.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "applink.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: 5000
+        envFrom:
+          - configMapRef:
+              name: configmap
+          - secretRef:
+              name: secretsmanagermongodb
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+

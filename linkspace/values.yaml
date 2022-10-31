@@ -1,0 +1,119 @@
+# Default values for applink.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+
+image:
+  repository: 644435390668.dkr.ecr.ap-northeast-2.amazonaws.com/yael_linkspaces
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 1.0.40
+
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 5000
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: 
+    kubernetes.io/ingress.class: nginx
+    nginx.org/proxy-connect-timeout: "90s"
+    cert-manager.io/cluster-issuer: letsencrypt-production
+  hosts:
+    - host: linksspace.tk
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: 
+   - secretName: secrettls
+     hosts:
+       - linksspace.tk
+
+
+
+#secret from AWS secrets Manager
+Secretdb:
+  enabled: true
+  name: secretsmanagermongodb
+  region: ap-northeast-2
+  dataFrom: mongodb
+  
+#secret from AWS secrets Manager
+Secrettls:
+  enabled: true
+  name: secrettls
+  region: ap-northeast-2
+  dataFrom: tls
+
+configmap:
+  name: configmap
+  hostname: mongodb-0.mongodb-headless,mongodb-1.mongodb-headless,mongodb-2.mongodb-headless
+  urlsuffix: authSource=admin
+
+#ca
+ClusterIssuer:
+  enabled: true
+  name: letsencrypt-production
+  server: https://acme-v02.api.letsencrypt.org/directory
+  email: yael260640@gmail.com
+  nameprivateKey: letsencrypt-production
+  solveringresssclass: nginx
+
+
+resources: 
+    requests:
+      cpu: 10m
+      memory: 50Mi
+    limits:
+      cpu: 10m
+      memory: 50Mi
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+
+#values to chart mongodb
+mongodb:
+  fullnameOverride: mongodb
+  nameOverride: mongodb
+  auth:
+    enabled: true
+    rootUser: admin
+    rootPassword: password
+  architecture: replicaset
+  useStatefulSet: true
+  replicaCount: 3
+  arbiter:
+    enabled: false
+  metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        additionalLabels:
+          release: "monitoring"
+
+#values to chart nginx
+ingress-nginx:
+  controller:
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        additionalLabels:
+          release: "monitoring"
+    
