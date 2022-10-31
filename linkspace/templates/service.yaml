@@ -7,9 +7,10 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: 
       targetPort: 5000
       protocol: TCP
+      port: {{ .Values.service.port }}
 
   selector:
     {{- include "links-app.selectorLabels" . | nindent 4 }}
