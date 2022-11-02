@@ -1,10 +1,9 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "links-app.fullname" . }}
   labels: 
-    {{- include "links-app.labels" . | nindent 6   }}
+    {{- include "links-app.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -22,7 +21,13 @@ spec:
         - containerPort: 5000
         envFrom:
           - configMapRef:
-            name: configmap
+              name: configmap
           - secretRef:
-            name: secretsmanagermongodb
-        resources: {{ toYaml .Values.resources | indent 10 }}
+              name: secretsmanagermongodb
+        resources:
+          requests:
+            cpu: 10m
+            memory: 50Mi
+          limits:
+            cpu: 10m
+            memory: 50Mi
