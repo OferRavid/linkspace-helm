@@ -34,7 +34,7 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "links-app.labels" -}}
-helm.sh/chart: {{ include "links-app.chart" . }}
+# helm.sh/chart: {{ include "links-app.chart" . }}
 {{ include "links-app.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}

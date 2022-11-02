@@ -22,7 +22,7 @@ spec:
         - containerPort: 5000
         envFrom:
           - configMapRef:
-              name: configmap
+            name: configmap
           - secretRef:
-              name: secretsmanagermongodb
+            name: secretsmanagermongodb
         resources: {{ toYaml .Values.resources | indent 10 }}
